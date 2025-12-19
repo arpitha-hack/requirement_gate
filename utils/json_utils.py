@@ -1,0 +1,16 @@
+import json
+import re
+
+def extract_json_array(text: str):
+    """
+    Extracts the first JSON array found in a string.
+    Raises ValueError if none found.
+    """
+    if not text:
+        raise ValueError("Empty response from LLM")
+
+    match = re.search(r"\[[\s\S]*\]", text)
+    if not match:
+        raise ValueError(f"No JSON array found in LLM response:\n{text}")
+
+    return json.loads(match.group())

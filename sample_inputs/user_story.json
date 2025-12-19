@@ -1,0 +1,17 @@
+{
+  "id": "FR-LOGIN-01",
+  "title": "Secure User Login",
+  "description": "As a registered user, I want to log in using my email address and password so that I can securely access my account within 2 seconds.",
+  "acceptance_criteria": [
+    "Given the user is registered, when the user enters a valid email and password and submits the login form, then the system authenticates the user and redirects them to the dashboard.",
+    "Given the user enters an invalid email or password, when the user submits the login form, then the system displays a clear authentication error message.",
+    "Given the user submits the login form, when authentication is successful, then the system completes the login process within 2 seconds."
+  ],
+  "nfrs": [
+    "Security: Passwords shall be transmitted over HTTPS and stored using industry-standard hashing.",
+    "Performance: User authentication shall complete within 2 seconds for 95% of requests.",
+    "Usability: Error messages shall be clear and understandable to non-technical users.",
+    "Availability: The login service shall be available 99.9% of the time."
+  ]
+}
+
