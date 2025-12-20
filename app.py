@@ -18,8 +18,8 @@ st.divider()
 # -----------------------------
 st.subheader("📌 Requirement Details")
 
-req_id = st.text_input("Requirement ID", value="FR-LOGIN-01")
-title = st.text_input("Title", value="Secure User Login")
+req_id = st.text_input("Requirement ID", placeholder="FR-LOGIN-01")
+title = st.text_input("Title", placeholder="Secure User Login")
 
 description = st.text_area(
     "User Story / Requirement Description",
@@ -58,8 +58,58 @@ selected_nfrs = st.multiselect(
     nfr_options
 )
 
-formatted_nfrs = [f"{nfr}" for nfr in selected_nfrs]
+# formatted_nfrs = [f"{nfr}" for nfr in selected_nfrs]
+nfr_details = []
 
+for nfr in selected_nfrs:
+    st.markdown(f"**{nfr} Details**")
+
+    if nfr == "Performance":
+        response_time = st.text_input(
+            "Max Response Time",
+            placeholder="e.g., ≤ 2 seconds"
+        )
+        throughput = st.text_input(
+            "Throughput (optional)",
+            placeholder="e.g., 100 requests/second"
+        )
+
+        detail = f"Performance: Response time {response_time}"
+        if throughput:
+            detail += f", Throughput {throughput}"
+
+        nfr_details.append(detail)
+
+    elif nfr == "Security":
+        auth = st.text_input(
+            "Authentication Requirement",
+            placeholder="e.g., OAuth2, MFA"
+        )
+        encryption = st.text_input(
+            "Encryption Requirement",
+            placeholder="e.g., AES-256, HTTPS"
+        )
+
+        detail = f"Security: Auth={auth}, Encryption={encryption}"
+        nfr_details.append(detail)
+
+    elif nfr == "Usability":
+        usability = st.text_input(
+            "Usability Constraint",
+            placeholder="e.g., Error messages understandable by non-technical users"
+        )
+
+        detail = f"Usability: {usability}"
+        nfr_details.append(detail)
+
+    elif nfr == "Availability":
+        sla = st.text_input(
+            "Availability SLA",
+            placeholder="e.g., 99.9% uptime"
+        )
+
+        detail = f"Availability: SLA {sla}"
+        nfr_details.append(detail)
 st.divider()
 
 # -----------------------------
@@ -75,7 +125,7 @@ if st.button("🚦 Run Requirements Quality Gate", type="primary"):
             "title": title,
             "description": description,
             "acceptance_criteria": [] if auto_generate else acceptance_criteria,
-            "nfrs": formatted_nfrs
+            "nfrs": nfr_details
         }
 
         with st.spinner("Running AI quality checks..."):
