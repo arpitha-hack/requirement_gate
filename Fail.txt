@@ -1,0 +1,73 @@
+import os
+from cryptography.fernet import Fernet
+
+# -------------------------
+# Configuration
+# -------------------------
+ALLOWED_EXTENSIONS = [".pdf", ".docx"]
+MAX_FILE_SIZE_MB = 10
+UPLOAD_DIR = "secure_storage"
+
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# Generate encryption key (store securely in real systems)
+KEY = Fernet.generate_key()
+cipher = Fernet(KEY)
+
+# -------------------------
+# Helper Functions
+# -------------------------
+def validate_file(file_path):
+    if not os.path.exists(file_path):
+        return False, "File not found"
+
+    ext = os.path.splitext(file_path)[1].lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        return False, "Unsupported file format"
+
+    size_mb = os.path.getsize(file_path) / (1024 * 1024)
+    if size_mb > MAX_FILE_SIZE_MB:
+        return False, "File size exceeds the allowed limit"
+
+    return True, "Validation successful"
+
+
+def encrypt_and_store(file_path):
+    with open(file_path, "rb") as f:
+        encrypted_data = cipher.encrypt(f.read())
+
+    filename = os.path.basename(file_path)
+    stored_path = os.path.join(UPLOAD_DIR, filename + ".enc")
+
+    with open(stored_path, "wb") as f:
+        f.write(encrypted_data)
+
+    return stored_path
+
+
+# -------------------------
+# Main Upload Function
+# -------------------------
+def upload_document(file_path, user_authenticated=True):
+    if not user_authenticated:
+        return "Error: User not authenticated"
+
+    valid, message = validate_file(file_path)
+    if not valid:
+        return f"Error: {message}"
+
+    stored_file = encrypt_and_store(file_path)
+
+    return {
+        "status": "Uploaded",
+        "message": "File uploaded successfully",
+        "stored_location": stored_file
+    }
+
+
+# -------------------------
+# Example Usage
+# -------------------------
+if __name__ == "__main__":
+    result = upload_document("sample.pdf")
+    print(result)
