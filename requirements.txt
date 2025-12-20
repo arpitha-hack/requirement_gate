@@ -3,3 +3,5 @@ openai
 pydantic
 requests
 python-dotenv
+python-docx 
+pypdf
