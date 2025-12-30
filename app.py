@@ -5,6 +5,10 @@ from main import run_quality_gate
 from utils.file_parser import extract_text_from_file
 from extractors.requirement_extractor import extract_requirements
 from utils.json_utils import extract_json_object
+import warnings
+
+# Suppress the specific warning
+warnings.filterwarnings("ignore", message=".*experimental_set_query_params.*")
 
 
 # -------------------------
@@ -95,7 +99,7 @@ if uploaded_file:
             st.session_state.extracted_data = extracted
 
         st.success("✅ Requirements extracted successfully")
-        st.experimental_set_query_params(refresh="true")
+        #st.experimental_set_query_params(refresh="true")
         #st.rerun()   # 🔑 FORCE UI REFRESH
 
 
@@ -104,24 +108,22 @@ if uploaded_file:
 # -------------------------
 if st.session_state.extracted_data:
     st.subheader("📦 Extracted Requirement JSON")
-    result=st.json(st.session_state.extracted_data)
-    # st.subheader("📦 Final JSON Output")
-    # st.json(result)
-    if result:
-        st.subheader("📥 Download Final JSON Output")
-        json_data = json.dumps(st.session_state.extracted_data, indent=4)
-        st.download_button(
-            label="📥 Download JSON",
-            data=json_data,
-            file_name="requirements_quality_gate_result.json",
-            mime="application/json"
-        )
-
-        st.subheader("📋 Copy JSON to Clipboard")
-        st.code(json_data, language="json")
+    
+    # Display the extracted JSON only once
+    json_data = json.dumps(st.session_state.extracted_data, indent=4)
+    st.download_button(
+        label="📥 Download JSON",
+        data=json_data,
+        file_name="requirements_quality_gate_result.json",
+        mime="application/json"
+    )
+    st.json(st.session_state.extracted_data)  # Display the extracted data
+    
+    #st.subheader("📥 Download Final JSON Output")
+    # st.subheader("📋 Copy JSON to Clipboard")
+    # st.code(json_data, language="json")
 
 st.divider()
-
 
 # -------------------------
 # Editable Requirement Form
@@ -195,11 +197,12 @@ if st.button("🚦 Run Requirements Quality Gate", type="primary"):
         else:
             st.error(f"❌ FAIL — Score {result['total_score']}/100")
 
-        st.subheader("📊 Score Breakdown")
-        st.json(result["scores"])
+        # st.subheader("📊 Score Breakdown")
+        # st.json(result["scores"])
 
-        st.subheader("📝 AI Feedback")
-        st.json(result["feedback"])
+        # st.subheader("📝 AI Feedback")
+        # st.json(result["feedback"])
 
         st.subheader("📦 Final JSON Output")
         st.json(result)
+
